@@ -1,10 +1,6 @@
-/* This code is to use with Adafruit BMP280 and OLED screen   (Metric)
- * It measures both temperature and pressure and it displays them on the OLED display with the altitude
- * It's a modified version of the Adafruit example code
- * Refer to www.surtrtech.com or SurtrTech Youtube channel
- */
-
-#include <Adafruit_GFX.h>      //Libraries for the OLED and BMP280
+//knihovny pro SSD1306 OLED displej
+#include <Adafruit_GFX.h>
+#include <RalewayFonts.hpp>
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_BMP280.h>
 
@@ -21,13 +17,6 @@ void setup() {
   display.clearDisplay();
   display.display();
   display.setTextColor(WHITE);
-  display.setTextSize(1); 
-  display.print("SurtrTech");     //Show the name, you can remove it or replace it
-  display.setCursor(32,12);
-  display.setTextSize(2);          
-  display.println("BMP280"); 
-  display.display();
-  delay(2000);
 }
 
 void loop() {
@@ -38,31 +27,19 @@ void loop() {
     float A = bmp.readAltitude(1019.66);      //Calculating the Altitude, the "1019.66" is the pressure in (hPa) at sea level at day in your region
                                               //If you don't know it just modify it until you get the altitude of your place
     
-    display.setCursor(0,0);                   //Oled display, just playing with text size and cursor to get the display you want
-    display.setTextColor(WHITE);
-    display.setTextSize(2); 
-    display.print("Temp");
-    
-    display.setCursor(0,18);
+    display.setFont(&Raleway_SemiBold10pt7b);
+    display.setCursor(0,22);
     display.print(T,1);
-    display.setCursor(50,17);
-    display.setTextSize(1);
-    display.print("C");
+    display.print(" C");
 
-    display.setTextSize(1);
-    display.setCursor(65,0);
-    display.print("Pres");
-    display.setCursor(65,10);
+    display.setFont(&Raleway_SemiBold6pt7b);
+    display.setCursor(65,13);
     display.print(P);
-    display.setCursor(110,10);
-    display.print("hPa");
+    display.print(" hPa");
 
     display.setCursor(65,25);
-    display.print("Alt");
-    display.setCursor(90,25);
     display.print(A,0);
-    display.setCursor(110,25);
-    display.print("m");
+    display.print(" m");
     
     display.display();
     for(byte contrast = 255; contrast > 0; contrast--){
