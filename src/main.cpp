@@ -4,53 +4,50 @@
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_BMP280.h>
 
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 32 // OLED display height, in pixels
-#define OLED_RESET    -1 // Reset pin # (or -1 if sharing Arduino reset pin)
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 32
+#define OLED_RESET    -1 
 
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET); //Declaring the display name (display)
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 Adafruit_BMP280 bmp;
 
-void setup() {  
-  bmp.begin();                                //Start the bmp                  
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); //Start the OLED display
+double time = 2000;
+double prevTime = 0;
+
+void setup() {
+  bmp.begin();
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
   display.display();
   display.setTextColor(WHITE);
 }
 
 void loop() {
+    time = millis();
+    if(time - prevTime > 2000){
+      display.clearDisplay();
+      float teplota = bmp.readTemperature();
+      float tlak = bmp.readPressure()/100;
+      float tlak_def = bmp.readAltitude(1019);
 
-    display.clearDisplay();
-    float T = bmp.readTemperature();           //Read temperature in °C
-    float P = bmp.readPressure()/100;         //Read Pressure in Pa and conversion to hPa
-    float A = bmp.readAltitude(1019.66);      //Calculating the Altitude, the "1019.66" is the pressure in (hPa) at sea level at day in your region
-                                              //If you don't know it just modify it until you get the altitude of your place
-    
-    display.setFont(&Raleway_SemiBold10pt7b);
-    display.setCursor(0,22);
-    display.print(T,1);
-    display.print(" C");
+      display.setFont(&Raleway_SemiBold10pt7b);
+      display.setCursor(0,22);
+      display.print(teplota,1);
+      display.setCursor(36, 15);
+      display.drawCircle(43,15,3,WHITE);
+      display.setCursor(48, 22);
+      display.print("C");
 
-    display.setFont(&Raleway_SemiBold6pt7b);
-    display.setCursor(65,13);
-    display.print(P);
-    display.print(" hPa");
+      display.setFont(&Raleway_SemiBold6pt7b);
+      display.setCursor(67,13);
+      display.print(tlak);
+      display.print(" hPa");
 
-    display.setCursor(65,25);
-    display.print(A,0);
-    display.print(" m");
-    
-    display.display();
-    for(byte contrast = 255; contrast > 0; contrast--){
-      display.ssd1306_command(SSD1306_SETCONTRAST);
-      display.ssd1306_command(contrast);
-      delay(4);
-    }
-    delay(500);
-    for(byte contrast = 0; contrast < 255; contrast++){
-      display.ssd1306_command(SSD1306_SETCONTRAST);
-      display.ssd1306_command(contrast);
-      delay(4);
+      display.setCursor(67,25);
+      display.print(tlak_def,0);
+      display.print(" m");
+      
+      display.display();
+      prevTime = time;
     }
 }
