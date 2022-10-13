@@ -13,8 +13,11 @@ Adafruit_BMP280 bmp;
 
 double time = 2000;
 double prevTime = 0;
+byte contrast;
 
 void setup() {
+  pinMode(A0, INPUT);
+  Serial.begin(9600);
   bmp.begin();
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
@@ -50,4 +53,11 @@ void loop() {
       display.display();
       prevTime = time;
     }
+  int reading = map(analogRead(A0), 0, 1023, 0, 255);
+  if(reading != contrast){
+    contrast = reading;
+    display.ssd1306_command(SSD1306_SETCONTRAST);
+    display.ssd1306_command(contrast);
+    Serial.println(contrast);
+  }
 }
