@@ -18,11 +18,13 @@ byte contrast;
 void setup() {
   pinMode(A0, INPUT);
   Serial.begin(9600);
+  Wire.begin();
   bmp.begin();
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
   display.display();
   display.setTextColor(WHITE);
+  Wire.setClock(100000);
 }
 
 void loop() {
@@ -31,7 +33,7 @@ void loop() {
       display.clearDisplay();
       float teplota = bmp.readTemperature();
       float tlak = bmp.readPressure()/100;
-      float tlak_def = bmp.readAltitude(1019);
+      float tlak_def = bmp.readAltitude(1035);
 
       display.setFont(&Raleway_SemiBold10pt7b);
       display.setCursor(0,22);
@@ -43,7 +45,7 @@ void loop() {
 
       display.setFont(&Raleway_SemiBold6pt7b);
       display.setCursor(67,13);
-      display.print(tlak);
+      display.print(tlak, 1);
       display.print(" hPa");
 
       display.setCursor(67,25);
