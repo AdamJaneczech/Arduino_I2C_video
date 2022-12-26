@@ -76,11 +76,28 @@ void loop() {
   byte reading = map(analogRead(A0), 0, 1023, 0, 255);
   //pokud se kontrast nerovná přečtené hodnotě, změnit kontrast
   if(reading != contrast){
+    //vyrovnání proměnných
+    contrast = reading;
+    //První způsob přenosu hodnoty kontrastu displeje
+    //-----------------------------------------------
+    //zahájit komunikaci přes I2C (START podmínka, odeslání adresy)
+    Wire.beginTransmission(0x3C);
+    //Kontrolní byte (datasheet str. 20)
+    Wire.write(0);
+    //Příkaz pro nastavení kontrastu (datasheet str. 36)
+    Wire.write(0x81);
+    //Odeslání hodnoty kontrastu
+    Wire.write(contrast);
+    //Ukončení komunikace (STOP podmínka)
+    Wire.endTransmission();
+    //-----------------------------------------------
+    //Druhý způsob přenosu hodnoty kontrastu displeje
+    /*
     //příkaz pro zápis do registru displeje pro kontrast
     display.ssd1306_command(SSD1306_SETCONTRAST);
     //odeslání 8-bitové hodnoty kontrastu displeje
     display.ssd1306_command(contrast);
     //vynulování rozdílů proměnných
-    contrast = reading;
+    */
   }
 }
